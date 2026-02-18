@@ -240,4 +240,4 @@ Your audit listed paths under `/api/track/...`. The actual API is under **`/api/
 - **Landing page:** Ready.  
 - **Database:** Ready.  
 
-**Overall:** The system is **suitable for production deployment** after you consider adding API throttling and, if desired, security event severity and apps index platform display. No critical bugs or misconfigurations were found that would block go-live.
+**Overall:** The system is **suitable for production deployment** after you consider adding API throttling and, if desired, security event severity and apps index platform display. No critical bugs o misconfigurations were found that would block go-live.
