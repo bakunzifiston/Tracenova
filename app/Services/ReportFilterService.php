@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 
 class ReportFilterService
 {
+    /** Environment values for filtering. Use "development" when app runs locally, "production" when live. */
     public const ENVIRONMENTS = [
-        'production' => 'Production',
-        'development' => 'Development',
+        'production' => 'Production (live)',
+        'development' => 'Development (local)',
         'staging' => 'Staging',
         'testing' => 'Testing',
     ];
