@@ -19,6 +19,11 @@
                     <x-nav-link :href="route('apps.index')" :active="request()->routeIs('apps.*')">
                         {{ __('Apps') }}
                     </x-nav-link>
+                    @if (Auth::user()->isSuperAdmin())
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.*')">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -77,6 +82,11 @@
             <x-responsive-nav-link :href="route('apps.index')" :active="request()->routeIs('apps.*')">
                 {{ __('Apps') }}
             </x-responsive-nav-link>
+            @if (Auth::user()->isSuperAdmin())
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

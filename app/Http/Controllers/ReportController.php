@@ -15,6 +15,8 @@ class ReportController extends Controller
      */
     public function index(Request $request, App $app): View
     {
+        $this->authorize('view', $app);
+
         $environment = ReportFilterService::environmentFromRequest($request);
         [$dateFrom, $dateTo] = ReportFilterService::dateRangeFromRequest($request);
         $datePreset = $request->query('date_preset', 'last_30_days');

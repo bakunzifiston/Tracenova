@@ -23,11 +23,12 @@ class AppController extends Controller
     ) {}
 
     /**
-     * List all registered apps.
+     * List all registered apps (only the current user's).
      */
     public function index(Request $request): View
     {
-        $apps = App::withCount('apiKeys', 'trackingEvents')
+        $apps = App::ownedBy($request->user()->id)
+            ->withCount('apiKeys', 'trackingEvents')
             ->with('platform')
             ->latest()
             ->paginate(10);
@@ -61,6 +62,7 @@ class AppController extends Controller
 
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
         $validated['is_tracking_enabled'] = $request->boolean('is_tracking_enabled', true);
+        $validated['user_id'] = $request->user()->id;
         // Set legacy platform from platform_id if not provided
         if (empty($validated['platform'])) {
             $platform = Platform::find($validated['platform_id']);
@@ -78,6 +80,8 @@ class AppController extends Controller
      */
     public function show(Request $request, App $app): View
     {
+        $this->authorize('view', $app);
+
         $filterEnv = ReportFilterService::environmentFromRequest($request);
         [$filterDateFrom, $filterDateTo] = ReportFilterService::dateRangeFromRequest($request);
         $filterDatePreset = $request->query('date_preset', 'last_30_days');
@@ -241,6 +245,8 @@ class AppController extends Controller
      */
     public function edit(App $app): View
     {
+        $this->authorize('update', $app);
+
         $platforms = Platform::active()->orderBy('sort_order')->get()->groupBy('category');
         return view('apps.edit', compact('app', 'platforms'));
     }
@@ -250,6 +256,8 @@ class AppController extends Controller
      */
     public function update(Request $request, App $app): RedirectResponse
     {
+        $this->authorize('update', $app);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9_-]+$/', Rule::unique('apps', 'slug')->ignore($app->id)],
@@ -278,6 +286,8 @@ class AppController extends Controller
      */
     public function destroy(App $app): RedirectResponse
     {
+        $this->authorize('delete', $app);
+
         $app->delete();
         return redirect()->route('apps.index')
             ->with('success', 'App deleted successfully.');
@@ -288,6 +298,8 @@ class AppController extends Controller
      */
     public function storeApiKey(Request $request, App $app): RedirectResponse
     {
+        $this->authorize('storeApiKey', $app);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -305,6 +317,8 @@ class AppController extends Controller
      */
     public function revokeApiKey(Request $request, App $app, ApiKey $api_key): RedirectResponse
     {
+        $this->authorize('revokeApiKey', $app);
+
         if ($api_key->app_id !== $app->id) {
             abort(404);
         }
@@ -318,6 +332,8 @@ class AppController extends Controller
      */
     public function journey(App $app, string $sessionId): View
     {
+        $this->authorize('view', $app);
+
         $items = [];
 
         foreach ($app->journeyEvents()->where('session_id', $sessionId)->orderBy('occurred_at')->get() as $e) {

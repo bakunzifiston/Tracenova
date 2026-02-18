@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\App;
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_approved',
+        'is_super_admin',
     ];
 
     /**
@@ -43,6 +47,29 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_approved' => 'boolean',
+            'is_super_admin' => 'boolean',
         ];
+    }
+
+    public function isApproved(): bool
+    {
+        return (bool) $this->is_approved;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
+    }
+
+    /** Users can access the app (dashboard, reports) only when approved or when they are super admin. */
+    public function canAccessApp(): bool
+    {
+        return $this->isSuperAdmin() || $this->isApproved();
+    }
+
+    public function apps(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(App::class, 'user_id');
     }
 }

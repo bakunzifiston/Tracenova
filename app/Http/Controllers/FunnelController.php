@@ -13,17 +13,23 @@ class FunnelController extends Controller
 {
     public function index(App $app): View
     {
+        $this->authorize('view', $app);
+
         $funnels = $app->funnels()->withCount('stepEvents')->latest()->get();
         return view('funnels.index', compact('app', 'funnels'));
     }
 
     public function create(App $app): View
     {
+        $this->authorize('view', $app);
+
         return view('funnels.create', compact('app'));
     }
 
     public function store(Request $request, App $app): RedirectResponse
     {
+        $this->authorize('view', $app);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'steps' => 'required|string|max:2000', // comma or newline separated
@@ -52,6 +58,8 @@ class FunnelController extends Controller
 
     public function show(App $app, Funnel $funnel): View
     {
+        $this->authorize('view', $app);
+
         if ($funnel->app_id !== $app->id) {
             abort(404);
         }
@@ -62,6 +70,8 @@ class FunnelController extends Controller
 
     public function edit(App $app, Funnel $funnel): View
     {
+        $this->authorize('view', $app);
+
         if ($funnel->app_id !== $app->id) {
             abort(404);
         }
@@ -70,6 +80,8 @@ class FunnelController extends Controller
 
     public function update(Request $request, App $app, Funnel $funnel): RedirectResponse
     {
+        $this->authorize('view', $app);
+
         if ($funnel->app_id !== $app->id) {
             abort(404);
         }
@@ -90,6 +102,8 @@ class FunnelController extends Controller
 
     public function destroy(App $app, Funnel $funnel): RedirectResponse
     {
+        $this->authorize('view', $app);
+
         if ($funnel->app_id !== $app->id) {
             abort(404);
         }

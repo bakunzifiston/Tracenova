@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User;
 
 class App extends Model
 {
@@ -16,6 +17,7 @@ class App extends Model
         'description',
         'platform',
         'platform_id',
+        'user_id',
         'is_tracking_enabled',
         'settings',
     ];
@@ -36,9 +38,20 @@ class App extends Model
         'other' => 'Other',
     ];
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function platform(): BelongsTo
     {
         return $this->belongsTo(Platform::class, 'platform_id');
+    }
+
+    /** Scope to apps owned by the given user (for data isolation). */
+    public function scopeOwnedBy($query, $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 
     public function apiKeys(): HasMany
