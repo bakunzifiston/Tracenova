@@ -1197,9 +1197,12 @@
                         @endif
 
                         <div class="pt-4 border-t border-gray-200">
+                            <p class="text-sm font-medium text-gray-900 mb-1">Environment (local vs live)</p>
+                            <p class="text-xs text-gray-500 mb-2">
+                                Use <strong>development</strong> when your app runs locally (localhost, dev machine). Use <strong>production</strong> when it is live. This lets you filter data in the dashboard by environment.
+                            </p>
                             <p class="text-xs text-gray-500">
-                                <strong>Note:</strong> Make sure to set the <code class="rounded bg-gray-100 px-1">environment</code> field in your tracking calls (production, development, staging, testing).
-                                This helps filter data in the dashboard.
+                                Set the <code class="rounded bg-gray-100 px-1">environment</code> field in every tracking call (e.g. <code class="rounded bg-gray-100 px-1">"development"</code> or <code class="rounded bg-gray-100 px-1">"production"</code>). Allowed: production, development, staging, testing.
                             </p>
                         </div>
                     </div>
@@ -1210,6 +1213,10 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="font-semibold text-gray-900 mb-2">Generic API Reference</h3>
                 <p class="text-sm text-gray-500 mb-4">Send events from your application using the API key in the <code class="rounded bg-gray-100 px-1">X-Api-Key</code> header or <code class="rounded bg-gray-100 px-1">Authorization: Bearer &lt;key&gt;</code>.</p>
+                <div class="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200">
+                    <p class="text-sm font-medium text-amber-900">Environment</p>
+                    <p class="text-xs text-amber-800 mt-0.5">Use <strong>development</strong> when your app runs locally; use <strong>production</strong> when it is live. Include <code class="rounded bg-amber-100 px-1">environment</code> in requests so you can filter by it in the dashboard.</p>
+                </div>
                 <pre class="rounded-lg bg-gray-900 text-gray-100 p-4 text-sm overflow-x-auto"><code>POST {{ url('/api/v1/track') }}
 Content-Type: application/json
 X-Api-Key: &lt;your-api-key&gt;
@@ -1221,12 +1228,13 @@ X-Api-Key: &lt;your-api-key&gt;
   "user_id": "optional-user-id",
   "environment": "production"
 }</code></pre>
+                <p class="mt-2 text-xs text-gray-500">Use <code class="rounded bg-gray-100 px-1">"development"</code> when running locally, <code class="rounded bg-gray-100 px-1">"production"</code> when live.</p>
                 <p class="mt-4 text-sm text-gray-500">Batch: <code class="rounded bg-gray-100 px-1">POST {{ url('/api/v1/track/batch') }}</code> with <code class="rounded bg-gray-100 px-1">{"events": [...]}</code></p>
                 <div class="mt-6 pt-6 border-t border-gray-200">
                     <p class="font-medium text-gray-900 mb-2">Session tracking</p>
                     <p class="text-sm text-gray-500 mb-2">Start, end, and heartbeat sessions; send cumulative foreground_seconds and background_seconds for mobile (e.g. app in background).</p>
                     <pre class="rounded-lg bg-gray-900 text-gray-100 p-4 text-sm overflow-x-auto"><code>POST {{ url('/api/v1/sessions/start') }}
-{ "session_id": "uuid-or-unique-id", "user_id": "optional", "metadata": {} }
+{ "session_id": "uuid-or-unique-id", "user_id": "optional", "environment": "production", "metadata": {} }
 
 POST {{ url('/api/v1/sessions/heartbeat') }}
 { "session_id": "...", "foreground_seconds": 120, "background_seconds": 30 }
